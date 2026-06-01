@@ -15,5 +15,19 @@ export const auth = betterAuth({
 
   emailAndPassword: {
     enabled: true,
+    autoSignIn: false,
+  },
+
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          await db
+            .insert(schema.userProfile)
+            .values({ userId: user.id })
+            .onConflictDoNothing();
+        },
+      },
+    },
   },
 });
